@@ -1,0 +1,50 @@
+<!-- example of how a sprite can be defined in xml -->
+<?xml version="1.0">
+<sprite version="1" name="iji">
+  <animation name="run right" loop="true">
+    <image path="run_right.bmp" size_x="44" size_y="63" key="0e3866"
+           orig_x="8" orig_y="2" />
+    <frame x="0" y="0" dur="80" />
+    <frame x="1" y="0" dur="80" />
+    <frame x="2" y="0" dur="80" />
+    <frame x="3" y="0" dur="80" />
+    <frame x="4" y="0" dur="80" />
+    <frame x="5" y="0" dur="80" />
+    <frame x="6" y="0" dur="80" />
+    <frame x="7" y="0" dur="80" />
+  </animation>
+  <animation name="run left" loop="true">
+    <image path="run_left.bmp" size_x="44" size_y="63" key="0e3866"
+           orig_x="8" orig_y="2" />
+    <frame x="7" y="0" dur="80" />
+    <frame x="6" y="0" dur="80" />
+    <frame x="5" y="0" dur="80" />
+    <frame x="4" y="0" dur="80" />
+    <frame x="3" y="0" dur="80" />
+    <frame x="2" y="0" dur="80" />
+    <frame x="1" y="0" dur="80" />
+    <frame x="0" y="0" dur="80" />
+  </animation>
+  <animation name="stand still" loop="false">
+    <image path="look_right.bmp" size_x="31" size_y="64" key="0e3866"
+           orig_x="0" orig_y="3" />
+    <frame x="0" y="0" dur="1000" />
+  </animation>
+  <animation name="look right" loop="true">
+    <image path="look_right.bmp" size_x="31" size_y="64" key="0e3866"
+           orig_x="0" orig_y="3" />
+    <frame x="0" y="0" dur="80" />
+    <frame x="1" y="0" dur="80" />
+    <frame x="2" y="0" dur="80" />
+    <frame x="3" y="0" dur="80" />
+    <frame x="4" y="0" dur="80" />
+    <frame x="5" y="0" dur="80" />
+    <frame x="6" y="0" dur="80" />
+    <frame x="7" y="0" dur="80" />
+    <frame x="8" y="0" dur="80" />
+    <frame x="9" y="0" dur="80" />
+    <frame x="10" y="0" dur="80" />
+    <frame x="11" y="0" dur="80" />
+    <frame x="12" y="0" dur="80" />
+  </animation>
+</sprite>

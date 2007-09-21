@@ -1,0 +1,131 @@
+#include "Animation.h"
+
+Animation::Animation(const char *name)
+{
+  this->name = name;
+  looping = true;
+  orig_x = 0;
+  orig_y = 0;
+
+  printf("New animation with name \"%s\"\n", name);
+}
+
+Animation::~Animation()
+{
+  /* Delete frames */
+  delete [] frames;
+}
+
+void
+Animation::addImage(const char *path, int size_x, int size_y,
+		    int orig_x, int orig_y, const char *key)
+{
+  image = SDL_LoadBMP(path);
+  if(image == 0)
+    {
+      printf("FAILED TO LOAD IMAGE \"%s\"\n", path);
+    }
+  else if(key)
+    {
+      if(strlen(key) == 6)
+	{
+	  int r, g, b;
+	  sscanf(key, "%2x", &r);
+	  sscanf(&key[2], "%2x", &g);
+	  sscanf(&key[4], "%2x", &b);
+
+	  SDL_SetColorKey(image, SDL_SRCCOLORKEY | SDL_RLEACCEL,
+			  SDL_MapRGB(image->format, r, g, b));
+	}
+    }
+
+  printf("orig_x: %d, orig_y: %d\n", orig_x, orig_y);
+
+  this->size_x = size_x;
+  this->size_y = size_y;
+  this->orig_x = orig_x;
+  this->orig_y = orig_y;
+}
+
+void
+Animation::addFrame(Frame *frame)
+{
+  temp_frames.push_back(frame);
+}
+
+void
+Animation::framesAdded()
+{
+  printf("Frames added!\n");
+
+  numFrames = temp_frames.size();
+
+  frames = new Frame*[numFrames];
+
+  int i = 0;
+  while(temp_frames.empty() == 0)
+    {
+      frames[i++] = temp_frames.front();
+      temp_frames.pop_front();
+    }
+
+  temp_frames.clear();
+}
+
+SDL_Surface *
+Animation::getImage()
+{
+  return image;
+}
+
+SDL_Rect *
+Animation::getRect(int frame)
+{
+  SDL_Rect *rect = new SDL_Rect;
+  Frame *f = frames[frame];
+  rect->w = size_x;
+  rect->h = size_y;
+  rect->x = f->x * size_x;
+  rect->y = f->y * size_y;
+
+  return rect;
+}
+
+void
+Animation::getNextFrame(int *currentFrame, int *timeSpentInFrame, int delta)
+{
+  if(*currentFrame >= numFrames)
+    {
+      printf("BUG! Frame was set to nonexistant frame no!\n");
+
+      *currentFrame = 0;
+      *timeSpentInFrame = 0;
+      
+      return;
+    }
+  else if(*currentFrame == numFrames - 1 && !looping)
+    {
+      /* Animation is at last frame */
+      return;
+    }
+
+  *timeSpentInFrame += delta;
+
+  while(*timeSpentInFrame >= frames[*currentFrame]->duration)
+    {
+      *timeSpentInFrame -= frames[*currentFrame]->duration;
+
+      (*currentFrame)++;
+      if(*currentFrame >= numFrames)
+	{
+	  *currentFrame = 0;
+	}
+    }
+}
+
+void
+Animation::setLooping(bool loop)
+{
+  looping = loop;
+}
+
