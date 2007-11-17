@@ -6,8 +6,6 @@ Animation::Animation(const char *name)
   looping = true;
   orig_x = 0;
   orig_y = 0;
-
-  printf("New animation with name \"%s\"\n", name);
 }
 
 Animation::~Animation()
@@ -39,8 +37,6 @@ Animation::addImage(const char *path, int size_x, int size_y,
 	}
     }
 
-  printf("orig_x: %d, orig_y: %d\n", orig_x, orig_y);
-
   this->size_x = size_x;
   this->size_y = size_y;
   this->orig_x = orig_x;
@@ -56,8 +52,6 @@ Animation::addFrame(Frame *frame)
 void
 Animation::framesAdded()
 {
-  printf("Frames added!\n");
-
   numFrames = temp_frames.size();
 
   frames = new Frame*[numFrames];

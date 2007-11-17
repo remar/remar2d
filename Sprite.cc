@@ -12,8 +12,6 @@ Sprite::Sprite(char *file)
       return;
     }
 
-  printf("Loaded file\n");
-
   TiXmlNode *sprite = 0, *animation = 0, *node = 0;
   TiXmlElement *element = 0;
 
@@ -80,7 +78,6 @@ Sprite::startNewAnimation(TiXmlElement *element)
   
   if(loop && strcmp(loop, "false") == 0)
     {
-      printf("Not looping\n");
       anim->setLooping(false);
     }
 
@@ -112,9 +109,6 @@ Sprite::addImageToAnimation(TiXmlElement *element, char *pathToXml)
   strncpy(pathToImage, pathToXml, pathLen);
   strncpy(&pathToImage[pathLen], path, strlen(path));
   pathToImage[strlen(path) + pathLen] = '\0';
-
-  printf("Add image to animation: %s, %d, %d, %d, %d\n",
-	 pathToImage, size_x, size_y, orig_x, orig_y);
 
   animations[currentAnimation]->addImage(pathToImage, size_x, size_y,
 					 orig_x, orig_y, key);
