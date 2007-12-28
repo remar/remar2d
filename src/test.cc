@@ -56,10 +56,10 @@ int main()
       exit(-1);
     }
 
-  char *SPRITES[] = { "gfx/iji.xml", "gfx/yellow_iji/iji.xml" };
+  char *SPRITES[] = { "../gfx/iji.xml", "../gfx/yellow_iji/iji.xml" };
   int num_sprites = 2;
 
-  char *t1 = gfx->loadTileSet("gfx/tileset.xml");
+  char *t1 = gfx->loadTileSet("../gfx/tileset.xml");
   printf("Tileset: %s\n", t1);
 
   for(int y = 0;y < 15;y++)
