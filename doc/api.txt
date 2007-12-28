@@ -1,0 +1,4 @@
+remar2d API documentation
+-------------------------------------------------------------------------------
+
+Documentation of the various functions that remar2d provides.
