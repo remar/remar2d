@@ -282,7 +282,6 @@ remar2d::loadSprite(char *file)
   Sprite *sprite = new Sprite(file);
   if(sprite)
     {
-      /* Store sprite somewhere */
       if(strcmp(sprite->getName(), "") == 0)
 	{
 	  errorCode = FAILED_LOAD_SPRITE;
@@ -351,6 +350,14 @@ remar2d::removeSpriteInstance(int sprite)
   printf("Remove sprite instance %d\n", sprite);
 }
 
+inline void truncate(int *v, int limit)
+{
+  if(*v < 0)
+    *v = 0;
+  else if(*v >= limit)
+    *v = limit - 1;
+}
+
 void
 remar2d::markBackgroundDirty(SDL_Rect *rect)
 {
@@ -364,23 +371,10 @@ remar2d::markBackgroundDirty(SDL_Rect *rect)
   y1 /= tileHeight;
   y2 /= tileHeight;
 
-  if(x1 < 0)
-    x1 = 0;
-  else if(x1 >= mapWidth)
-    x1 = mapWidth - 1;
-  if(x2 < 0)
-    x2 = 0;
-  else if(x2 >= mapWidth)
-    x2 = mapWidth - 1;
-
-  if(y1 < 0)
-    y1 = 0;
-  else if(y1 >= mapHeight)
-    y1 = mapHeight - 1;
-  if(y2 < 0)
-    y2 = 0;
-  else if(y2 >= mapHeight)
-    y2 = mapHeight - 1;
+  truncate(&x1, mapWidth);
+  truncate(&x2, mapWidth);
+  truncate(&y1, mapHeight);
+  truncate(&y2, mapHeight);
 
   for(int y = y1;y <= y2;y++)
     for(int x = x1;x <= x2;x++)
