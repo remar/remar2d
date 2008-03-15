@@ -1,4 +1,4 @@
-CFLAGS =	`sdl-config --cflags`
+CFLAGS =	`sdl-config --cflags` -g -Wall
 CPPFLAGS =	$(CFLAGS)
 LIBS =		`sdl-config --libs`
 
