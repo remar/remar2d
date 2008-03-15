@@ -22,9 +22,10 @@
 
 #include <string.h>
 
-remar2d::remar2d(int width, int height, int bpp, int fullscreen)
+remar2d::remar2d(int width, int height, int bpp, int fullscreen,
+		 const char *title)
   : errorCode(NO_ERROR), nextSpriteInstance(1), lastTime(0), frameCounter(0),
-    frameTimer(0), backgroundSetup(false)
+    frameTimer(0), backgroundSetup(false), pausedAnimations(false)
 {
   /* SDL_RESIZABLE makes it possible to switch between window/fullscreen */
   int flags = SDL_DOUBLEBUF | SDL_RESIZABLE;
@@ -45,8 +46,13 @@ remar2d::remar2d(int width, int height, int bpp, int fullscreen)
     }
 
   setBackgroundColor(0, 0, 0);
+
+  SDL_ShowCursor(SDL_DISABLE);
+
+  SDL_WM_SetCaption(title, 0);
 }
 
+// TODO: Use exceptions instead
 remar2d::ErrorCode
 remar2d::getError()
 {
@@ -87,19 +93,22 @@ remar2d::redraw()
     }
 
   /* Animate sprites to see where we need to redraw */
-  for(int i = 1;i < nextSpriteInstance;i++)
+  if(!pausedAnimations)
     {
-      SpriteInstance *spriteInstance = spriteInstances[i];
-
-      if(spriteInstance && spriteInstance->getVisible())
+      for(int i = 1;i < nextSpriteInstance;i++)
 	{
-	  spriteInstance->animate(delta);
-
-	  if(spriteInstance->getRedraw() == true)
+	  SpriteInstance *spriteInstance = spriteInstances[i];
+	  
+	  if(spriteInstance && spriteInstance->getVisible())
 	    {
-	      SDL_Rect *rect = spriteInstance->getLastRect();
-
-	      markBackgroundDirty(rect);
+	      spriteInstance->animate(delta);
+	      
+	      if(spriteInstance->getRedraw() == true)
+		{
+		  SDL_Rect *rect = spriteInstance->getLastRect();
+		  
+		  markBackgroundDirty(rect);
+		}
 	    }
 	}
     }
@@ -123,12 +132,16 @@ remar2d::redraw()
 	    {
 	      tiles[i]->markSpritesDirty();
 
-	      TileSet *set = tileSets[tiles[i]->tileSet];
-	  
-	      source = set->getRect(tiles[i]->x, tiles[i]->y);
-	      image = set->getImage();
+	      if(tiles[i]->empty == false)
+		{
+		  /* TODO: Store this info in the tile instead (optimize) */
+		  TileSet *set = tileSets[tiles[i]->tileSet];
 
-	      SDL_BlitSurface(image, source, screen, &dest);
+		  source = set->getRect(tiles[i]->x, tiles[i]->y);
+		  image = set->getImage();
+
+		  SDL_BlitSurface(image, source, screen, &dest);
+		}
 	    }
 	}
       /* Clear dirty flags */
@@ -165,6 +178,8 @@ remar2d::redraw()
 	  dest.x = spriteInstance->x - animation->orig_x;
 	  dest.y = spriteInstance->y - animation->orig_y;
 
+	  // printf("Redraw %s\n", sprite->getName());
+
 	  SDL_BlitSurface(animSurface,
 			  source,
 			  screen,
@@ -187,7 +202,7 @@ remar2d::redraw()
 
   if(SDL_GetTicks() - frameTimer > 1000)
     {
-      //printf("FPS: %d\n", frameCounter);
+      // printf("FPS: %d\n", frameCounter);
       frameTimer = SDL_GetTicks();
       frameCounter = 0;
     }
@@ -260,7 +275,7 @@ remar2d::setupTileBackground(int size_x, int size_y)
 
   for(int i = 0;i < mapWidth * mapHeight;i++)
     {
-      tiles[i] = 0;
+      tiles[i] = new Tile();
       dirty[i] = 1;
     }
 
@@ -270,6 +285,9 @@ remar2d::setupTileBackground(int size_x, int size_y)
 void
 remar2d::setTile(int x, int y, char *tileSet, int t_x, int t_y)
 {
+  if(tiles[y*mapWidth + x])
+    delete tiles[y*mapWidth + x];
+
   Tile *tile = new Tile(tileSet, t_x, t_y);
 
   tiles[y*mapWidth + x] = tile;
@@ -329,19 +347,100 @@ remar2d::setAnimation(int sprite, char *animation)
 void
 remar2d::moveSpriteRel(int sprite, int x, int y)
 {
+  /* Remove sprite from tiles */
+  removeSpriteFromTiles(spriteInstances[sprite]);
+
   spriteInstances[sprite]->moveRel(x, y);
+
+  /* Add sprite to tiles */
+  addSpriteToTiles(spriteInstances[sprite]);
+}
+
+inline void clip(int *v, int limit)
+{
+  if(*v < 0)
+    *v = 0;
+  else if(*v >= limit)
+    *v = limit - 1;
+}
+
+void
+remar2d::addSpriteToTiles(SpriteInstance *spriteInstance)
+{
+  SDL_Rect *rect = spriteInstance->getCurrentRect();
+
+  int x1 = rect->x;
+  int x2 = rect->x + rect->w;
+  int y1 = rect->y;
+  int y2 = rect->y + rect->h;
+
+  x1 /= tileWidth;
+  x2 /= tileWidth;
+  y1 /= tileHeight;
+  y2 /= tileHeight;
+
+  clip(&x1, mapWidth);
+  clip(&x2, mapWidth);
+  clip(&y1, mapHeight);
+  clip(&y2, mapHeight);
+
+  for(int y = y1;y <= y2;y++)
+    for(int x = x1;x <= x2;x++)
+      {
+	if(tiles[x + y * mapWidth])
+	  tiles[x + y * mapWidth]->addSpriteInstance(spriteInstance);
+      }
+}
+
+void
+remar2d::removeSpriteFromTiles(SpriteInstance *spriteInstance)
+{
+  SDL_Rect *rect = spriteInstance->getCurrentRect();
+
+  int x1 = rect->x;
+  int x2 = rect->x + rect->w;
+  int y1 = rect->y;
+  int y2 = rect->y + rect->h;
+
+  x1 /= tileWidth;
+  x2 /= tileWidth;
+  y1 /= tileHeight;
+  y2 /= tileHeight;
+
+  clip(&x1, mapWidth);
+  clip(&x2, mapWidth);
+  clip(&y1, mapHeight);
+  clip(&y2, mapHeight);
+
+  for(int y = y1;y <= y2;y++)
+    for(int x = x1;x <= x2;x++)
+      {
+	if(tiles[x + y * mapWidth])
+	  tiles[x + y * mapWidth]->removeSpriteInstance(spriteInstance);
+      }
 }
 
 void
 remar2d::moveSpriteAbs(int sprite, int x, int y)
 {
+  /* Remove sprite from tiles */
+  removeSpriteFromTiles(spriteInstances[sprite]);
+
   spriteInstances[sprite]->moveAbs(x, y);
+
+  /* Add sprite to tiles */
+  addSpriteToTiles(spriteInstances[sprite]);
 }
 
 void
 remar2d::showSprite(int sprite, bool show)
 {
   spriteInstances[sprite]->setVisible(show);
+
+  SDL_Rect *rect = spriteInstances[sprite]->getLastRect();
+  markBackgroundDirty(rect);
+  // TODO: If hiding a sprite, mark background as dirty to be sure
+  //       sprite is overdrawn
 }
 
 void
@@ -350,12 +449,16 @@ remar2d::removeSpriteInstance(int sprite)
   printf("Remove sprite instance %d\n", sprite);
 }
 
-inline void truncate(int *v, int limit)
+void
+remar2d::pauseAnimation(int sprite, bool on)
 {
-  if(*v < 0)
-    *v = 0;
-  else if(*v >= limit)
-    *v = limit - 1;
+  spriteInstances[sprite]->pauseAnimation(on);
+}
+
+void
+remar2d::pauseAnimations(bool on)
+{
+  pausedAnimations = on;
 }
 
 void
@@ -371,16 +474,15 @@ remar2d::markBackgroundDirty(SDL_Rect *rect)
   y1 /= tileHeight;
   y2 /= tileHeight;
 
-  truncate(&x1, mapWidth);
-  truncate(&x2, mapWidth);
-  truncate(&y1, mapHeight);
-  truncate(&y2, mapHeight);
+  clip(&x1, mapWidth);
+  clip(&x2, mapWidth);
+  clip(&y1, mapHeight);
+  clip(&y2, mapHeight);
 
   for(int y = y1;y <= y2;y++)
     for(int x = x1;x <= x2;x++)
       {
 	dirty[x + y * mapWidth] = 1;
+	tiles[x + y * mapWidth]->markSpritesDirty();
       }
-
-  // printf("Mark (%d,%d)-(%d,%d) as dirty\n", x1, y1, x2, y2);
 }

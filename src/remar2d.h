@@ -38,7 +38,7 @@ class remar2d
       FAILED_LOAD_TILESET
     };
 
-  remar2d(int width, int height, int bpp, int fullscreen);
+  remar2d(int width, int height, int bpp, int fullscreen, const char *title);
 
   ErrorCode getError();
   char *getErrorMessage();
@@ -64,6 +64,9 @@ class remar2d
   void moveSpriteAbs(int sprite, int x, int y);
   void showSprite(int sprite, bool show);
   void removeSpriteInstance(int sprite);
+  void pauseAnimation(int sprite, bool on);
+
+  void pauseAnimations(bool on);
 
  private:
   /* The screen that remar2d renders to. */
@@ -73,17 +76,17 @@ class remar2d
 
   int screenWidth, screenHeight;
 
-  int mapWidth, mapHeight;
-  int tileWidth, tileHeight;
-
   map<string, Sprite *> sprites;
   map<int, SpriteInstance *> spriteInstances;
   map<string, TileSet *> tileSets;
 
   /* TODO: Class for tilemap. */
 
+  /* Data to keep track of the background (tilemap...) */
   Tile **tiles;
   int *dirty;
+  int mapWidth, mapHeight;
+  int tileWidth, tileHeight;
 
   /* When creating a sprite instance, this variable holds the id
      number for that instance. */
@@ -102,7 +105,13 @@ class remar2d
 
   void markBackgroundDirty(SDL_Rect *rect);
 
+  void addSpriteToTiles(SpriteInstance *spriteInstance);
+  void removeSpriteFromTiles(SpriteInstance *spriteInstance);
+
   int ALTERNATE;
+
+  /* Pause all animations (used for pausing in games...) */
+  bool pausedAnimations;
 };
 
 #endif
