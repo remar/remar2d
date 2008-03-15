@@ -20,7 +20,13 @@
 #include "Tile.h"
 #include <algorithm>
 
+Tile::Tile()
+  : empty(true)
+{
+}
+
 Tile::Tile(char *tileSet, int x, int y)
+  : empty(false)
 {
   this->tileSet = tileSet;
   this->x = x;
@@ -42,7 +48,12 @@ Tile::removeSpriteInstance(SpriteInstance *spriteInstance)
 /* This should have been a lambda... */
 template<class T> struct setRedraw : public unary_function<T, void>
 {
-  void operator() (T x) {x->setRedraw(true);}
+  void operator() (T x)
+  {
+//     Sprite *sprite = x->getSprite();
+//     printf("Mark %s as dirty!!\n", sprite->getName());
+    x->setRedraw(true);
+  }
 };
 
 void

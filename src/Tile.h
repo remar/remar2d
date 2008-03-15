@@ -28,6 +28,7 @@ using namespace std;
 class Tile
 {
  public:
+  Tile();
   Tile(char *tileSet, int x, int y);
 
   /** Add sprite instance to tile to indicate that this sprite should
@@ -41,9 +42,16 @@ class Tile
   void markSpritesDirty();
 
   char *tileSet;
+
+  /* Tile position in the tileset */
   int x, y;
+
   bool redraw;
   list<SpriteInstance *> sprites;
+
+  /* If empty, this tile contains no graphic, just overdraw with
+     background color when necessary */
+  bool empty;
 };
 
 #endif
