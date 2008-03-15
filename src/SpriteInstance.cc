@@ -20,8 +20,8 @@
 #include "SpriteInstance.h"
 
 SpriteInstance::SpriteInstance(Sprite *sprite)
-  : currentAnimation(0), x(0), y(0), currentFrame(0), timeSpentInFrame(0),
-    redraw(false)
+  : currentAnimationName(0), x(0), y(0), currentFrame(0), timeSpentInFrame(0),
+    redraw(false), currentAnimation(0), paused(false)
 {
   this->sprite = sprite;
 }
@@ -29,9 +29,12 @@ SpriteInstance::SpriteInstance(Sprite *sprite)
 void
 SpriteInstance::setAnimation(char *animation)
 {
-  currentAnimation = animation;
+  currentAnimationName = animation;
   currentFrame = 0;
   timeSpentInFrame = 0;
+
+  currentAnimation = sprite->getAnimation(currentAnimationName);
+  currentAnimRect = currentAnimation->getRect(0);
 
   redraw = true;
 }
@@ -51,22 +54,28 @@ SpriteInstance::getSprite()
 char *
 SpriteInstance::getCurrentAnimation()
 {
-  return currentAnimation;
+  return currentAnimationName;
 }
 
 void
 SpriteInstance::animate(int delta)
 {
-  if(!currentAnimation)
+  if(!currentAnimationName || paused)
     return;
 
-  Animation *animation = sprite->getAnimation(currentAnimation);
+  // Animation *animation = sprite->getAnimation(currentAnimationName);
 
   int oldFrame = currentFrame;
-  animation->getNextFrame(&currentFrame, &timeSpentInFrame, delta);
+  currentAnimation->getNextFrame(&currentFrame, &timeSpentInFrame, delta);
 
   if(currentFrame != oldFrame)
     redraw = true;
+}
+
+void
+SpriteInstance::pauseAnimation(bool yes)
+{
+  paused = yes;
 }
 
 bool
@@ -122,4 +131,16 @@ SDL_Rect *
 SpriteInstance::getLastRect()
 {
   return &lastRect;
+}
+
+SDL_Rect *
+SpriteInstance::getCurrentRect()
+{
+  // Animation *animation = sprite->getAnimation(currentAnimationName);
+  currentRect.x = x;
+  currentRect.y = y;
+  currentRect.w = currentAnimRect->w;
+  currentRect.h = currentAnimRect->h;
+
+  return &currentRect;
 }

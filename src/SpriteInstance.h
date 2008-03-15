@@ -31,6 +31,7 @@ class SpriteInstance
   Sprite *getSprite();
   char *getCurrentAnimation();
   void animate(int delta);
+  void pauseAnimation(bool yes);
   bool getVisible();
   void setRedraw(bool redraw);
   bool getRedraw();
@@ -38,17 +39,24 @@ class SpriteInstance
   void moveAbs(int x, int y);
   void setLastRect(int x, int y, int w, int h);
   SDL_Rect *getLastRect();
+  SDL_Rect *getCurrentRect();
   int x, y;
   int currentFrame;
   int old_x, old_y;
 
  private:
   Sprite *sprite;
-  char *currentAnimation;
+
+  char *currentAnimationName;
+  Animation *currentAnimation;
+  SDL_Rect *currentAnimRect;
+  bool paused;
+
   int timeSpentInFrame;
   bool visible;
   bool redraw;
   SDL_Rect lastRect;
+  SDL_Rect currentRect;
 };
 
 #endif // SPRITE_INSTANCE_H
