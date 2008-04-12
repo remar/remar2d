@@ -48,7 +48,6 @@ Sprite::Sprite(char *file)
 	{
 	  element = animation->ToElement();
 
-	  // startNewAnimation(element->Attribute("name"));
 	  startNewAnimation(element);
 
 	  while(node = animation->IterateChildren(node))
@@ -138,11 +137,25 @@ Sprite::addImageToAnimation(TiXmlElement *element, char *pathToXml)
 void
 Sprite::addFrameToAnimation(TiXmlElement *element)
 {
-  int x = atoi(element->Attribute("x"));
-  int y = atoi(element->Attribute("y"));
-  int dur = atoi(element->Attribute("dur"));
+  int x = 0, y = 0, dur = 0;
+  bool emptyFrame = false;
 
-  Frame *frame = new Frame(x, y, dur);
+  const char *empty = element->Attribute("empty");
+
+  if(empty && strcmp(empty, "true") == 0)
+    {
+      emptyFrame = true;
+      printf("Load empty frame\n");
+    }
+  else
+    {
+      x = atoi(element->Attribute("x"));
+      y = atoi(element->Attribute("y"));
+    }
+
+  dur = atoi(element->Attribute("dur"));
+
+  Frame *frame = new Frame(x, y, dur, emptyFrame);
 
   animations[currentAnimation]->addFrame(frame);
 }

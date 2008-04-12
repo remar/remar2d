@@ -45,7 +45,7 @@ int main()
 {
   SDL_Init(SDL_INIT_VIDEO);
 
-  gfx = new remar2d(WIDTH, HEIGHT, BPP, FS);
+  gfx = new remar2d(WIDTH, HEIGHT, BPP, FS, "test");
 
   gfx->setupTileBackground(32, 32);
 
@@ -107,6 +107,8 @@ int main()
 		  right_checked = 0;
 		  break;
 		case SDLK_ESCAPE: quit = 1;          break;
+		default:
+		  break;
 		}
 	      break;
 
@@ -120,6 +122,8 @@ int main()
 		case SDLK_RIGHT:
 		  right_pressed = 0;
 		  right_checked = 0;
+		  break;
+		default:
 		  break;
 		}
 	      break;

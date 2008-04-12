@@ -39,6 +39,7 @@ class Animation
   SDL_Rect *getRect(int frame);
   void getNextFrame(int *currentFrame, int *timeSpentInTime, int delta);
   void setLooping(bool loop);
+  bool emptyFrame(int currentFrame);
 
   /* Centre point of animation */
   int orig_x, orig_y;

@@ -148,9 +148,12 @@ remar2d::redraw()
       dirty[i] = 0;
     }
 
-  for(int i = 1;i < nextSpriteInstance;i++)
+  map<int, SpriteInstance *>::iterator it = spriteInstances.begin();
+
+  // for(int i = 1;i < nextSpriteInstance;i++)
+  for(;it != spriteInstances.end();it++)
     {
-      SpriteInstance *spriteInstance = spriteInstances[i];
+      SpriteInstance *spriteInstance = (*it).second; // spriteInstances[i];
 
       if(spriteInstance
 	 && spriteInstance->getVisible()
@@ -172,23 +175,28 @@ remar2d::redraw()
 	  Animation *animation = sprite->getAnimation(anim);
 	  int currentFrame = spriteInstance->currentFrame;
 
-	  SDL_Surface *animSurface = animation->getImage();
-	  source = animation->getRect(currentFrame);
+	  if(!animation->emptyFrame(currentFrame))
+	    {
 
-	  dest.x = spriteInstance->x - animation->orig_x;
-	  dest.y = spriteInstance->y - animation->orig_y;
+	      SDL_Surface *animSurface = animation->getImage();
+	      source = animation->getRect(currentFrame);
 
-	  // printf("Redraw %s\n", sprite->getName());
+	      dest.x = spriteInstance->x - animation->orig_x;
+	      dest.y = spriteInstance->y - animation->orig_y;
 
-	  SDL_BlitSurface(animSurface,
-			  source,
-			  screen,
-			  &dest);
+	      // printf("Redraw %s\n", sprite->getName());
+	      
+	      SDL_BlitSurface(animSurface,
+			      source,
+			      screen,
+			      &dest);
 
-	  /* Save where we painted so we can paint over later */
-	  spriteInstance->setLastRect(dest.x, dest.y, source->w, source->h);
-
-	  delete source;
+	      /* Save where we painted so we can paint over later */
+	      spriteInstance->setLastRect(dest.x, dest.y,
+					  source->w, source->h);
+	      
+	      delete source;
+	    }
 	}
     }
 

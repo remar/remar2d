@@ -12,6 +12,7 @@
     <frame x="5" y="0" dur="80" />
     <frame x="6" y="0" dur="80" />
     <frame x="7" y="0" dur="80" />
+    <frame empty="true" dur="80" />
   </animation>
   <animation name="run left" loop="true">
     <image path="run_left.bmp" size_x="44" size_y="63" key="0e3866"
@@ -38,13 +39,16 @@
     <frame x="2" y="0" dur="80" />
     <frame x="3" y="0" dur="80" />
     <frame x="4" y="0" dur="80" />
+    <frame empty="true" dur="80" />
     <frame x="5" y="0" dur="80" />
     <frame x="6" y="0" dur="80" />
     <frame x="7" y="0" dur="80" />
     <frame x="8" y="0" dur="80" />
+    <frame empty="true" dur="80" />
     <frame x="9" y="0" dur="80" />
     <frame x="10" y="0" dur="80" />
     <frame x="11" y="0" dur="80" />
     <frame x="12" y="0" dur="80" />
+    <frame empty="true" dur="80" />
   </animation>
 </sprite>

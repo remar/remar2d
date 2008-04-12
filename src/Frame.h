@@ -25,12 +25,14 @@ class Frame
  public:
   int x, y;
   int duration;
+  bool empty;
 
-  Frame(int x, int y, int duration)
+  Frame(int x, int y, int duration, bool empty)
     {
       this->x = x;
       this->y = y;
       this->duration = duration;
+      this->empty = empty;
     }
 };
 

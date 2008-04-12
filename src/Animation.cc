@@ -142,3 +142,8 @@ Animation::setLooping(bool loop)
   looping = loop;
 }
 
+bool
+Animation::emptyFrame(int currentFrame)
+{
+  return frames[currentFrame]->empty;
+}
