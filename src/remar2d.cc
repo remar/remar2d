@@ -293,10 +293,18 @@ remar2d::setupTileBackground(int size_x, int size_y)
 void
 remar2d::setTile(int x, int y, char *tileSet, int t_x, int t_y)
 {
-  if(tiles[y*mapWidth + x])
-    delete tiles[y*mapWidth + x];
+  /* Save the old tile for a while, might want to get list of sprites
+     from it */
+  // TODO: Maybe we should just modify the tile directly instead...?
+  Tile *oldTile = tiles[y*mapWidth + x];
 
   Tile *tile = new Tile(tileSet, t_x, t_y);
+
+  if(oldTile)
+    {
+      tile->setListOfSprites(oldTile->getListOfSprites());
+      delete oldTile;
+    }
 
   tiles[y*mapWidth + x] = tile;
   dirty[y*mapWidth + x] = 1;
@@ -342,6 +350,8 @@ remar2d::createSpriteInstance(char *sprite)
 {
   Sprite *spr = sprites[string(sprite)];
   spriteInstances[nextSpriteInstance] = new SpriteInstance(spr);
+
+  printf("Create sprite instance %d (%s)\n", nextSpriteInstance, sprite);
 
   return nextSpriteInstance++;
 }
@@ -454,7 +464,7 @@ remar2d::showSprite(int sprite, bool show)
 void
 remar2d::removeSpriteInstance(int sprite)
 {
-  printf("Remove sprite instance %d\n", sprite);
+  printf("Remove sprite instance %d (%s)\n", sprite, spriteInstances[sprite]->getSprite()->getName());
 }
 
 void

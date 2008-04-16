@@ -45,6 +45,19 @@ Tile::removeSpriteInstance(SpriteInstance *spriteInstance)
   sprites.remove(spriteInstance);
 }
 
+list<SpriteInstance *> *
+Tile::getListOfSprites()
+{
+  return &sprites;
+}
+
+void
+Tile::setListOfSprites(list<SpriteInstance *> *oldSpriteList)
+{
+  /* Is this too ugly? It destroys the old sprite list... */
+  sprites.swap(*oldSpriteList);
+}
+
 /* This should have been a lambda... */
 template<class T> struct setRedraw : public unary_function<T, void>
 {

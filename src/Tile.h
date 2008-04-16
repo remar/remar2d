@@ -39,6 +39,9 @@ class Tile
       has left the tile so redraw isn't needed when tile is redrawn. */
   void removeSpriteInstance(SpriteInstance *spriteInstance);
 
+  list<SpriteInstance *> *getListOfSprites();
+  void setListOfSprites(list<SpriteInstance *> *oldSpriteList);
+
   void markSpritesDirty();
 
   char *tileSet;
