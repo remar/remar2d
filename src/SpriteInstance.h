@@ -38,6 +38,7 @@ class SpriteInstance
   void moveRel(int x, int y);
   void moveAbs(int x, int y);
   void setLastRect(int x, int y, int w, int h);
+  void setNeverRedraw(bool on);
   SDL_Rect *getLastRect();
   SDL_Rect *getCurrentRect();
   int x, y;
@@ -57,6 +58,8 @@ class SpriteInstance
   bool redraw;
   SDL_Rect lastRect;
   SDL_Rect currentRect;
+
+  bool neverRedraw;
 };
 
 #endif // SPRITE_INSTANCE_H

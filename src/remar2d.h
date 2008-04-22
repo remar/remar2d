@@ -65,8 +65,13 @@ class remar2d
   void showSprite(int sprite, bool show);
   void removeSpriteInstance(int sprite);
   void pauseAnimation(int sprite, bool on);
+  void neverRedraw(int sprite, bool on);
 
   void pauseAnimations(bool on);
+
+  char *loadFont(char *file);
+  void removeFont(char *font);
+  int print(char *font, int x, int y, char *text);
 
  private:
   /* The screen that remar2d renders to. */

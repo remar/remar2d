@@ -21,7 +21,7 @@
 
 SpriteInstance::SpriteInstance(Sprite *sprite)
   : currentAnimationName(0), x(0), y(0), currentFrame(0), timeSpentInFrame(0),
-    redraw(false), currentAnimation(0), paused(false)
+    redraw(false), currentAnimation(0), paused(false), neverRedraw(false)
 {
   this->sprite = sprite;
 }
@@ -87,7 +87,8 @@ SpriteInstance::getVisible()
 void
 SpriteInstance::setRedraw(bool redraw)
 {
-  this->redraw = redraw;
+  if(!neverRedraw)
+    this->redraw = redraw;
 }
 
 bool
@@ -125,6 +126,12 @@ SpriteInstance::setLastRect(int x, int y, int w, int h)
   lastRect.y = y;
   lastRect.w = w;
   lastRect.h = h;
+}
+
+void
+SpriteInstance::setNeverRedraw(bool on)
+{
+  neverRedraw = on;
 }
 
 SDL_Rect *

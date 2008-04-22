@@ -351,7 +351,7 @@ remar2d::createSpriteInstance(char *sprite)
   Sprite *spr = sprites[string(sprite)];
   spriteInstances[nextSpriteInstance] = new SpriteInstance(spr);
 
-  printf("Create sprite instance %d (%s)\n", nextSpriteInstance, sprite);
+  //printf("Create sprite instance %d (%s)\n", nextSpriteInstance, sprite);
 
   return nextSpriteInstance++;
 }
@@ -464,13 +464,20 @@ remar2d::showSprite(int sprite, bool show)
 void
 remar2d::removeSpriteInstance(int sprite)
 {
-  printf("Remove sprite instance %d (%s)\n", sprite, spriteInstances[sprite]->getSprite()->getName());
+  //printf("Remove sprite instance %d (%s)\n", sprite, spriteInstances[sprite]->getSprite()->getName());
 }
 
 void
 remar2d::pauseAnimation(int sprite, bool on)
 {
   spriteInstances[sprite]->pauseAnimation(on);
+}
+
+void
+remar2d::neverRedraw(int sprite, bool on)
+{
+  if(SpriteInstance *spr = spriteInstances[sprite])
+    spr->setNeverRedraw(on);
 }
 
 void
