@@ -331,7 +331,7 @@ remar2d::loadSprite(char *file)
   /* Store sprite */
   sprites[string(sprite->getName())] = sprite;
 
-  /* Use this name when you wan't to create instances of this sprite */
+  /* Use this name when you want to create instances of this sprite */
   return sprite->getName();
 }
 
@@ -484,6 +484,54 @@ void
 remar2d::pauseAnimations(bool on)
 {
   pausedAnimations = on;
+}
+
+char *
+remar2d::loadFont(char *file)
+{
+  Font *font = new Font(file);
+
+  if(!font || strcmp(font->getName(), "") == 0)
+    {
+      return 0;
+    }
+
+  /* Store sprite */
+  fonts[string(font->getName())] = font;
+
+  /* Use this name when you want to print with this font */
+  return font->getName();
+}
+
+void
+remar2d::removeFont(char *font)
+{
+  Font *fnt = fonts[string(font)];
+
+  fonts.erase(string(font));
+
+  delete fnt;
+}
+
+int
+remar2d::print(char *font, char *text)
+{
+  /* Create a new sprite, new animation, new frame containing the
+     text. 
+     Add sprite instance to normal map of sprite instances.
+  */
+  printf("PRINT \"%s\"\n", text);
+
+  // Font *font = 
+}
+
+void
+remar2d::showPointer(bool on)
+{
+  if(on)
+    SDL_ShowCursor(SDL_ENABLE);
+  else
+    SDL_ShowCursor(SDL_DISABLE);
 }
 
 void

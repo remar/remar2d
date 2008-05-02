@@ -25,6 +25,7 @@
 #include "SpriteInstance.h"
 #include "TileSet.h"
 #include "Tile.h"
+#include "Font.h"
 
 class remar2d
 {
@@ -71,7 +72,9 @@ class remar2d
 
   char *loadFont(char *file);
   void removeFont(char *font);
-  int print(char *font, int x, int y, char *text);
+  int print(char *font, char *text);
+
+  void showPointer(bool on);
 
  private:
   /* The screen that remar2d renders to. */
@@ -84,6 +87,7 @@ class remar2d
   map<string, Sprite *> sprites;
   map<int, SpriteInstance *> spriteInstances;
   map<string, TileSet *> tileSets;
+  map<string, Font *> fonts;
 
   /* TODO: Class for tilemap. */
 

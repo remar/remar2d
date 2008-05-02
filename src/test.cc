@@ -68,6 +68,10 @@ int main()
 	if(x*y%5)
 	  gfx->setTile(x, y, t1, (x*y)%4, 0);
       }
+
+  char *fnt = gfx->loadFont("../gfx/text.xml");
+  int txt = gfx->print(fnt, "hello world");
+  // gfx->moveSpriteAbs(txt, 100, 100);
   
   for(int i = 0;i < num_sprites;i++)
     {
