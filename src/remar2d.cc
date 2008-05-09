@@ -25,12 +25,15 @@
 remar2d::remar2d(int width, int height, int bpp, int fullscreen,
 		 const char *title)
   : errorCode(NO_ERROR), nextSpriteInstance(1), lastTime(0), frameCounter(0),
-    frameTimer(0), backgroundSetup(false), pausedAnimations(false)
+    frameTimer(0), backgroundSetup(false), pausedAnimations(false),
+    fullScreen(false), screenWidth(width), screenHeight(height), screenBPP(bpp)
 {
   /* SDL_RESIZABLE makes it possible to switch between window/fullscreen */
   int flags = SDL_DOUBLEBUF | SDL_RESIZABLE;
 
-  if(fullscreen)
+  fullScreen = fullscreen;
+
+  if(fullScreen)
     {
       flags |= SDL_FULLSCREEN;
     }
@@ -150,10 +153,9 @@ remar2d::redraw()
 
   map<int, SpriteInstance *>::iterator it = spriteInstances.begin();
 
-  // for(int i = 1;i < nextSpriteInstance;i++)
   for(;it != spriteInstances.end();it++)
     {
-      SpriteInstance *spriteInstance = (*it).second; // spriteInstances[i];
+      SpriteInstance *spriteInstance = (*it).second;
 
       if(spriteInstance
 	 && spriteInstance->getVisible()
@@ -166,6 +168,7 @@ remar2d::redraw()
 	  SDL_Rect dest;
 
 	  char *anim = spriteInstance->getCurrentAnimation();
+
 	  if(!anim)
 	    {
 	      /* If animation isn't set, just continue */
@@ -298,7 +301,16 @@ remar2d::setTile(int x, int y, char *tileSet, int t_x, int t_y)
   // TODO: Maybe we should just modify the tile directly instead...?
   Tile *oldTile = tiles[y*mapWidth + x];
 
-  Tile *tile = new Tile(tileSet, t_x, t_y);
+  Tile *tile;
+
+  if(tileSet == 0)
+    {
+      tile = new Tile();
+    }
+  else
+    {
+      tile = new Tile(tileSet, t_x, t_y);
+    }
 
   if(oldTile)
     {
@@ -349,6 +361,7 @@ int
 remar2d::createSpriteInstance(char *sprite)
 {
   Sprite *spr = sprites[string(sprite)];
+
   spriteInstances[nextSpriteInstance] = new SpriteInstance(spr);
 
   //printf("Create sprite instance %d (%s)\n", nextSpriteInstance, sprite);
@@ -514,15 +527,94 @@ remar2d::removeFont(char *font)
 }
 
 int
-remar2d::print(char *font, char *text)
+remar2d::print(char *fontName, char *text)
 {
   /* Create a new sprite, new animation, new frame containing the
      text. 
      Add sprite instance to normal map of sprite instances.
   */
-  printf("PRINT \"%s\"\n", text);
 
-  // Font *font = 
+  /*
+BRILLANT
+  */
+
+  SDL_Rect destRect;
+
+  Font *font = fonts[string(fontName)];
+
+  int width  = font->getWidth();
+  int height = font->getHeight();
+
+  int len = strlen(text);
+
+  int rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+  SDL_Surface *image;
+  image = SDL_CreateRGBSurface(SDL_HWSURFACE | SDL_SRCCOLORKEY,
+			       width * len,
+			       height,
+			       32,
+			       rmask, gmask, bmask, amask);
+
+  Character *character;
+  SDL_Surface *charset;
+  SDL_Rect *source;
+
+  for(int i = 0;i < len;i++)
+    {
+      if(text[i] == ' ')
+ 	continue;
+
+      destRect.x = i * width;
+      destRect.y = 0;
+      destRect.w = width;
+      destRect.h = height;
+
+      character = font->getCharacter(text[i]);
+
+      if(character)
+	{
+	  charset = character->getImage();
+	  source = character->getRect();
+
+	  SDL_BlitSurface(charset, source, image, &destRect);
+	}
+    }
+
+  Animation *animation = new Animation("normal");
+  animation->addSDLImage(image, width * len, height);
+
+  Frame *frame = new Frame(0, 0, 1000, false);
+
+  animation->addFrame(frame);
+  animation->framesAdded();
+  animation->setLooping(false);
+  
+  Sprite *sprite = new Sprite();
+  sprite->addAnimation(animation);
+
+  char buf[1024];
+  sprintf(buf, "text%d", nextSpriteInstance);
+  sprite->setName(buf);
+
+  sprites[string(sprite->getName())] = sprite;
+
+  int instance = createSpriteInstance(sprite->getName());
+  setAnimation(instance, "normal");
+
+  return instance;
 }
 
 void
@@ -532,6 +624,32 @@ remar2d::showPointer(bool on)
     SDL_ShowCursor(SDL_ENABLE);
   else
     SDL_ShowCursor(SDL_DISABLE);
+}
+
+void
+remar2d::setFullScreen(bool on)
+{
+  if(fullScreen == on)
+    return;
+
+  int flags = SDL_DOUBLEBUF | SDL_RESIZABLE;
+
+  fullScreen = on;
+  if(fullScreen)
+    {
+      flags |= SDL_FULLSCREEN;
+    }
+
+  screen = SDL_SetVideoMode(screenWidth, screenHeight, screenBPP, flags);
+
+  SDL_Rect dirtyRect;
+
+  dirtyRect.x = 0;
+  dirtyRect.y = 0;
+  dirtyRect.w = screenWidth;
+  dirtyRect.h = screenHeight;
+
+  markBackgroundDirty(&dirtyRect);
 }
 
 void

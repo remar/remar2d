@@ -41,7 +41,7 @@ void setAnimation(char *anim)
     gfx->setAnimation(is[i], anim);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
   SDL_Init(SDL_INIT_VIDEO);
 
@@ -65,14 +65,10 @@ int main()
   for(int y = 0;y < 15;y++)
     for(int x = 0;x < 20;x++)
       {
-	if(x*y%5)
-	  gfx->setTile(x, y, t1, (x*y)%4, 0);
+	gfx->setTile(x, y, t1, (x*y)%4, 0);
       }
 
   char *fnt = gfx->loadFont("../gfx/text.xml");
-  int txt = gfx->print(fnt, "hello world");
-  // gfx->moveSpriteAbs(txt, 100, 100);
-  
   for(int i = 0;i < num_sprites;i++)
     {
       gfx->loadSprite(SPRITES[i]);
@@ -90,6 +86,7 @@ int main()
   int quit = 0;
   int left_pressed = 0, right_pressed = 0;
   int left_checked = 0, right_checked = 0;
+  int txt = 0;
 
   while(!quit)
     {
@@ -110,6 +107,22 @@ int main()
 		  right_pressed = 1;
 		  right_checked = 0;
 		  break;
+
+		case SDLK_p:
+		  if(!txt)
+		    {
+		      txt = gfx->print(fnt, "titta det funkar 123");
+
+		      printf("txt sprite instance: %d\n", txt);
+
+		      gfx->showSprite(txt, true);
+		      gfx->moveSpriteAbs(txt, 100, 100);
+  		    }
+		  else
+		    gfx->moveSpriteRel(txt, 1, 0);
+
+		  break;
+
 		case SDLK_ESCAPE: quit = 1;          break;
 		default:
 		  break;

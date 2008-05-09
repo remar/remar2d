@@ -23,8 +23,6 @@
 TileSet::TileSet(char *file)
   : size_x(0), size_y(0), image(0), name("")
 {
-  printf("Loading tileset \"%s\"\n", file);
-
   TiXmlDocument doc(file);
 
   if(!doc.LoadFile())

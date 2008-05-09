@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <font version="1" name="text" size_x="16" size_y="16">
   <charset>
-    <image name="text" path="text.bmp" key="000000" />
+    <image name="text" path="text.bmp" />
     <char id="a" x="0" y="0" />
     <char id="b" x="1" y="0" />
     <char id="c" x="2" y="0" />
@@ -31,7 +31,6 @@
   </charset>
   <charset>
     <image name="numbers" path="numbers.bmp" key="000000" />
-    <char id="0" x="0" y="0" />
     <char id="1" x="1" y="0" />
     <char id="2" x="2" y="0" />
     <char id="3" x="3" y="0" />
@@ -42,5 +41,6 @@
     <char id="8" x="8" y="0" />
     <char id="9" x="9" y="0" />
     <char id="#" x="10" y="0" />
+    <char id="0" x="0" y="0" />
   </charset>
 </font>

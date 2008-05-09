@@ -76,13 +76,17 @@ class remar2d
 
   void showPointer(bool on);
 
+  void printResources();
+
+  void setFullScreen(bool on);
+
  private:
   /* The screen that remar2d renders to. */
   SDL_Surface *screen;
 
-  Uint32 backgroundColor;
+  int screenWidth, screenHeight, screenBPP;
 
-  int screenWidth, screenHeight;
+  Uint32 backgroundColor;
 
   map<string, Sprite *> sprites;
   map<int, SpriteInstance *> spriteInstances;
@@ -121,6 +125,8 @@ class remar2d
 
   /* Pause all animations (used for pausing in games...) */
   bool pausedAnimations;
+
+  bool fullScreen;
 };
 
 #endif

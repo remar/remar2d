@@ -63,6 +63,16 @@ Animation::addImage(const char *path, int size_x, int size_y,
 }
 
 void
+Animation::addSDLImage(SDL_Surface *surface, int size_x, int size_y)
+{
+  image = surface;
+  this->size_x = size_x;
+  this->size_y = size_y;
+  orig_x = 0;
+  orig_y = 0;
+}
+
+void
 Animation::addFrame(Frame *frame)
 {
   temp_frames.push_back(frame);
@@ -146,4 +156,10 @@ bool
 Animation::emptyFrame(int currentFrame)
 {
   return frames[currentFrame]->empty;
+}
+
+const char *
+Animation::getName()
+{
+  return name;
 }

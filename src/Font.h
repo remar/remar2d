@@ -14,6 +14,11 @@ class Font
   ~Font();
 
   char *getName();
+
+  int getWidth();
+  int getHeight();
+
+  Character *getCharacter(char ch);
   
  private:
   char *addImageToFont(TiXmlElement *element, char *pathToXml);

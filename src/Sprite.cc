@@ -22,8 +22,6 @@
 Sprite::Sprite(char *file)
   : name("")
 {
-  printf("Loading sprite \"%s\"\n", file);
-
   TiXmlDocument doc(file);
 
   if(!doc.LoadFile())
@@ -68,6 +66,12 @@ Sprite::Sprite(char *file)
     }
 }
 
+Sprite::Sprite()
+  : name(0)
+{
+  
+}
+
 Sprite::~Sprite()
 {
   /* Delete animations */
@@ -77,14 +81,30 @@ Sprite::~Sprite()
 
 char *
 Sprite::getName()
-{
+{  
   return name;
+}
+
+void
+Sprite::setName(char *n)
+{
+  if(name)
+    delete [] name;
+
+  name = new char[strlen(n) + 1];
+  strncpy(name, n, strlen(n) + 1);
 }
 
 Animation *
 Sprite::getAnimation(char *animName)
 {
   return animations[animName];
+}
+
+void
+Sprite::addAnimation(Animation *animation)
+{
+  animations[string(animation->getName())] = animation;
 }
 
 void
@@ -145,7 +165,6 @@ Sprite::addFrameToAnimation(TiXmlElement *element)
   if(empty && strcmp(empty, "true") == 0)
     {
       emptyFrame = true;
-      printf("Load empty frame\n");
     }
   else
     {

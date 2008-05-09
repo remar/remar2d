@@ -6,7 +6,7 @@ Character::Character(SDL_Surface *img, SDL_Rect *rect)
   character.w = rect->w;
   character.h = rect->h;
   character.x = rect->x;
-  character.x = rect->x;
+  character.y = rect->y;
 }
 
 Character::~Character()

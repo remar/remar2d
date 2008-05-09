@@ -3,8 +3,6 @@
 Font::Font(char *file)
   : name(""), size_x(0), size_y(0)
 {
-  printf("Loading font \"%s\"\n", file);
-
   TiXmlDocument doc(file);
 
   if(!doc.LoadFile())
@@ -47,8 +45,6 @@ Font::Font(char *file)
 	    }	  
 	}
     }
-
-  printf("Name: \"%s\"\n", name);
 }
 
 Font::~Font()
@@ -62,11 +58,27 @@ Font::getName()
   return name;
 }
 
+int
+Font::getWidth()
+{
+  return size_x;
+}
+
+int
+Font::getHeight()
+{
+  return size_y;
+}
+
+Character *
+Font::getCharacter(char ch)
+{
+  return characters[ch];
+}
+
 char *
 Font::addImageToFont(TiXmlElement *element, char *pathToXml)
 {
-  printf("Add image to font (%s)\n", pathToXml);
-
   int pathLen;
   for(int i = strlen(pathToXml);i >= 0;i--)
     {
@@ -104,8 +116,6 @@ Font::addImageToFont(TiXmlElement *element, char *pathToXml)
   strncpy(&pathToImage[pathLen], path, strlen(path));
   pathToImage[strlen(path) + pathLen] = '\0';
 
-  printf("Image: %s\n", pathToImage);
-
   SDL_Surface *image = SDL_LoadBMP(pathToImage);
   if(image == 0)
     {
@@ -124,8 +134,6 @@ Font::addImageToFont(TiXmlElement *element, char *pathToXml)
 			  SDL_MapRGB(image->format, r, g, b));
 	}
 
-      printf("Name: %s\n", name);
-
       images[std::string(name)] = image;
     }
 
@@ -137,8 +145,6 @@ Font::addImageToFont(TiXmlElement *element, char *pathToXml)
 void
 Font::addCharToFont(TiXmlElement *element, char *currentImage)
 {
-  printf("Current image: %s\n", currentImage);
-
   char *id = (char *)element->Attribute("id");
   char ch = id[0];
 

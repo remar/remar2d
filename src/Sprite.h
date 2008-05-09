@@ -31,10 +31,13 @@ class Sprite
 {
  public:
   Sprite(char *file);
+  Sprite();
   ~Sprite();
 
   char *getName();
+  void setName(char *n);
   Animation *getAnimation(char *animName);
+  void addAnimation(Animation *anim);
 
  private:
   char *name;

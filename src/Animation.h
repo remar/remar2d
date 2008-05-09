@@ -33,6 +33,7 @@ class Animation
   ~Animation();
   void addImage(const char *path, int size_x, int size_y,
 		int orig_x, int orig_y, const char *key);
+  void addSDLImage(SDL_Surface *surface, int size_x, int size_y);
   void addFrame(Frame *frame);
   void framesAdded();
   SDL_Surface *getImage();
@@ -40,6 +41,7 @@ class Animation
   void getNextFrame(int *currentFrame, int *timeSpentInTime, int delta);
   void setLooping(bool loop);
   bool emptyFrame(int currentFrame);
+  const char *getName();
 
   /* Centre point of animation */
   int orig_x, orig_y;
