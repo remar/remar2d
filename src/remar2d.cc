@@ -466,18 +466,20 @@ remar2d::moveSpriteAbs(int sprite, int x, int y)
 void
 remar2d::showSprite(int sprite, bool show)
 {
-  spriteInstances[sprite]->setVisible(show);
+  if(spriteInstances[sprite])
+    {
+      spriteInstances[sprite]->setVisible(show);
 
-  SDL_Rect *rect = spriteInstances[sprite]->getLastRect();
-  markBackgroundDirty(rect);
-  // TODO: If hiding a sprite, mark background as dirty to be sure
-  //       sprite is overdrawn
+      SDL_Rect *rect = spriteInstances[sprite]->getLastRect();
+      markBackgroundDirty(rect);
+    }
 }
 
 void
 remar2d::removeSpriteInstance(int sprite)
 {
   //printf("Remove sprite instance %d (%s)\n", sprite, spriteInstances[sprite]->getSprite()->getName());
+  showSprite(sprite, false);
 }
 
 void
