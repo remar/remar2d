@@ -41,6 +41,8 @@ class remar2d
 
   remar2d(int width, int height, int bpp, int fullscreen, const char *title);
 
+  void showCredits();
+
   ErrorCode getError();
   char *getErrorMessage();
 

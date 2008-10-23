@@ -53,6 +53,19 @@ remar2d::remar2d(int width, int height, int bpp, int fullscreen,
   SDL_ShowCursor(SDL_DISABLE);
 
   SDL_WM_SetCaption(title, 0);
+
+  showCredits();
+}
+
+void
+remar2d::showCredits()
+{
+  printf("remar2d credits---------------------------------------------------"
+	 "-------------\n");
+  printf("SDL by Sam Lantinga et. al. (c) ?-? (www.libsdl.org)\n");
+  printf("TinyXML by Lee Thomason (c) 2000-2006 (www.grinninglizard.com)\n");
+  printf("------------------------------------------------------------------"
+	 "-------------\n");
 }
 
 // TODO: Use exceptions instead
