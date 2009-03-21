@@ -1,14 +1,23 @@
-CFLAGS =	`sdl-config --cflags` -g -Wall
+CFLAGS =	`sdl-config --cflags` -g -Wall -pg
 CPPFLAGS =	$(CFLAGS)
-LIBS =		`sdl-config --libs`
+LIBS =		`sdl-config --libs` -pg
 
 PROGS =		test
 
 all:		$(PROGS)
 
-TEST =		test.o remar2d.o tinyxml.o tinystr.o tinyxmlerror.o \
+SRC = 		remar2d.o tinyxml.o tinystr.o tinyxmlerror.o \
 		tinyxmlparser.o Sprite.o Animation.o SpriteInstance.o \
-		TileSet.o Tile.o Font.o Character.o
+		TileSet.o Tile.o Font.o Character.o SurfaceCache.o
+
+TEST =		test.o $(SRC)
+
+libremar2d.a:	$(SRC)
+	ar rvs $@ $(SRC)
+
+install:	libremar2d.a
+	-cp libremar2d.a /usr/lib/.
+	-cp remar2d.h /usr/include/.
 
 test:		$(TEST)
 		g++ -o $@ $^ $(LIBS)

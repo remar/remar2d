@@ -21,11 +21,6 @@
 #define REMAR2D_H
 
 #include "SDL.h"
-#include "Sprite.h"
-#include "SpriteInstance.h"
-#include "TileSet.h"
-#include "Tile.h"
-#include "Font.h"
 
 class remar2d
 {
@@ -40,19 +35,20 @@ class remar2d
     };
 
   remar2d(int width, int height, int bpp, int fullscreen, const char *title);
+  ~remar2d();
 
   void showCredits();
 
   ErrorCode getError();
   char *getErrorMessage();
 
-  int redraw();
+  void redraw();
 
   void setBackgroundColor(int r, int g, int b);
 
   char *loadTileSet(char *file);
-  int   removeTileSet(char *tileset);
-  bool  loadTileMap(char *file);
+  void  removeTileSet(char *tileset);
+  void  loadTileMap(char *file);
 
   void setupTileBackground(int size_x, int size_y);
   void setTile(int x, int y, char *tileSet, int t_x, int t_y);
@@ -81,54 +77,6 @@ class remar2d
   void printResources();
 
   void setFullScreen(bool on);
-
- private:
-  /* The screen that remar2d renders to. */
-  SDL_Surface *screen;
-
-  int screenWidth, screenHeight, screenBPP;
-
-  Uint32 backgroundColor;
-
-  map<string, Sprite *> sprites;
-  map<int, SpriteInstance *> spriteInstances;
-  map<string, TileSet *> tileSets;
-  map<string, Font *> fonts;
-
-  /* TODO: Class for tilemap. */
-
-  /* Data to keep track of the background (tilemap...) */
-  Tile **tiles;
-  int *dirty;
-  int mapWidth, mapHeight;
-  int tileWidth, tileHeight;
-
-  /* When creating a sprite instance, this variable holds the id
-     number for that instance. */
-  int nextSpriteInstance;
-
-  /* Keep track of time to perform animation. */
-  int lastTime;
-
-  ErrorCode errorCode;
-
-  int frameCounter;
-  int frameTimer;
-
-  /* Background has been set up */
-  bool backgroundSetup;
-
-  void markBackgroundDirty(SDL_Rect *rect);
-
-  void addSpriteToTiles(SpriteInstance *spriteInstance);
-  void removeSpriteFromTiles(SpriteInstance *spriteInstance);
-
-  int ALTERNATE;
-
-  /* Pause all animations (used for pausing in games...) */
-  bool pausedAnimations;
-
-  bool fullScreen;
 };
 
 #endif

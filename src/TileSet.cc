@@ -20,6 +20,9 @@
 #include "TileSet.h"
 #include "tinyxml.h"
 
+#include "SurfaceCache.h"
+extern SurfaceCache *surfaceCache;
+
 TileSet::TileSet(char *file)
   : size_x(0), size_y(0), image(0), name("")
 {
@@ -65,7 +68,7 @@ TileSet::TileSet(char *file)
       strncpy(&pathToImage[pathLen], path, strlen(path));
       pathToImage[strlen(path) + pathLen] = '\0';
 
-      image = SDL_LoadBMP(pathToImage);
+      image = surfaceCache->get(pathToImage);
 
       if(key)
 	{

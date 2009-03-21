@@ -20,8 +20,8 @@
 #include "SpriteInstance.h"
 
 SpriteInstance::SpriteInstance(Sprite *sprite)
-  : currentAnimationName(0), x(0), y(0), currentFrame(0), timeSpentInFrame(0),
-    redraw(false), currentAnimation(0), paused(false), neverRedraw(false)
+  :  x(0), y(0), currentFrame(0),currentAnimationName(0), currentAnimation(0),
+     paused(false), timeSpentInFrame(0),redraw(false),  neverRedraw(false)
 {
   this->sprite = sprite;
 }
@@ -143,6 +143,7 @@ SpriteInstance::getLastRect()
 SDL_Rect *
 SpriteInstance::getCurrentRect()
 {
+  // FIXME: Must take into account the animation offset as well!!
   // Animation *animation = sprite->getAnimation(currentAnimationName);
   currentRect.x = x;
   currentRect.y = y;

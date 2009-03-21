@@ -19,17 +19,95 @@
 
 #include "remar2d.h"
 #include "Sprite.h"
+#include "SpriteInstance.h"
+#include "TileSet.h"
+#include "Tile.h"
+#include "Font.h"
+#include "SurfaceCache.h"
 
 #include <string.h>
 
+// +IMPLEMENTATION DETAILS
+
+  /* The screen that remar2d renders to. */
+  SDL_Surface *screen;
+
+SurfaceCache *surfaceCache;
+
+  int screenWidth, screenHeight, screenBPP;
+
+  SDL_Rect *updateRects;
+  SDL_Rect *allRects;
+
+  Uint32 backgroundColor;
+
+  map<string, Sprite *> sprites;
+  map<int, SpriteInstance *> spriteInstances;
+  map<string, TileSet *> tileSets;
+  map<string, Font *> fonts;
+
+  /* TODO: Class for tilemap. */
+
+  /* Data to keep track of the background (tilemap...) */
+  Tile **tiles;
+  int *dirty;
+  int mapWidth, mapHeight;
+  int tileWidth, tileHeight;
+
+  /* When creating a sprite instance, this variable holds the id
+     number for that instance. */
+  int nextSpriteInstance;
+
+  /* Keep track of time to perform animation. */
+  int lastTime;
+
+remar2d::ErrorCode errorCode;
+
+  int frameCounter;
+  int frameTimer;
+
+  /* Background has been set up */
+  bool backgroundSetup;
+
+  void markBackgroundDirty(SDL_Rect *rect);
+
+  void addSpriteToTiles(SpriteInstance *spriteInstance);
+  void removeSpriteFromTiles(SpriteInstance *spriteInstance);
+
+  int ALTERNATE;
+
+  /* Pause all animations (used for pausing in games...) */
+  bool pausedAnimations;
+
+  bool fullScreen;
+
+void addSpriteToTiles(SpriteInstance *spriteInstance);
+void removeSpriteFromTiles(SpriteInstance *spriteInstance);
+void markBackgroundDirty(SDL_Rect *rect);
+
+// -IMPLEMENTATION DETAILS
+
+
 remar2d::remar2d(int width, int height, int bpp, int fullscreen,
 		 const char *title)
-  : errorCode(NO_ERROR), nextSpriteInstance(1), lastTime(0), frameCounter(0),
-    frameTimer(0), backgroundSetup(false), pausedAnimations(false),
-    fullScreen(false), screenWidth(width), screenHeight(height), screenBPP(bpp)
 {
+  errorCode = NO_ERROR;
+  nextSpriteInstance = 1;
+  lastTime = 0;
+  frameCounter = 0;
+  frameTimer = 0;
+  backgroundSetup = false;
+  pausedAnimations = false;
+  fullScreen = false;
+  screenWidth = width;
+  screenHeight = height;
+  screenBPP = bpp;
+  updateRects = 0;
+  allRects = 0;
+
   /* SDL_RESIZABLE makes it possible to switch between window/fullscreen */
-  int flags = SDL_DOUBLEBUF | SDL_RESIZABLE;
+  //int flags = SDL_DOUBLEBUF | SDL_RESIZABLE;
+  int flags = SDL_RESIZABLE;
 
   fullScreen = fullscreen;
 
@@ -55,6 +133,13 @@ remar2d::remar2d(int width, int height, int bpp, int fullscreen,
   SDL_WM_SetCaption(title, 0);
 
   showCredits();
+
+  surfaceCache = new SurfaceCache();
+}
+
+remar2d::~remar2d()
+{
+  delete surfaceCache;
 }
 
 void
@@ -92,7 +177,7 @@ remar2d::getErrorMessage()
     }
 }
 
-int
+void
 remar2d::redraw()
 {
   int delta;
@@ -137,8 +222,8 @@ remar2d::redraw()
     {
       if(dirty[i])
 	{
-	  dest.x = (i%mapWidth)*tileWidth;
-	  dest.y = (i/mapWidth)*tileHeight;
+	  dest.x = allRects[i].x;
+	  dest.y = allRects[i].y;
 	  dest.w = tileWidth;
 	  dest.h = tileHeight;
 
@@ -160,8 +245,6 @@ remar2d::redraw()
 		}
 	    }
 	}
-      /* Clear dirty flags */
-      dirty[i] = 0;
     }
 
   map<int, SpriteInstance *>::iterator it = spriteInstances.begin();
@@ -216,7 +299,21 @@ remar2d::redraw()
 	}
     }
 
-  SDL_Flip(screen);
+  int dirtyRects = 0;
+
+  for(int i = 0;i < mapWidth*mapHeight;i++)
+    if(dirty[i])
+      {
+	updateRects[dirtyRects].x = allRects[i].x;
+	updateRects[dirtyRects].y = allRects[i].y;
+	updateRects[dirtyRects].w = allRects[i].w;
+	updateRects[dirtyRects].h = allRects[i].h;
+	
+	dirtyRects++;
+	dirty[i] = 0;
+      }
+
+  SDL_UpdateRects(screen, dirtyRects, updateRects);
 
   frameCounter++;
   if(frameTimer == 0)
@@ -226,7 +323,7 @@ remar2d::redraw()
 
   if(SDL_GetTicks() - frameTimer > 1000)
     {
-      // printf("FPS: %d\n", frameCounter);
+      //printf("FPS: %d\n", frameCounter);
       frameTimer = SDL_GetTicks();
       frameCounter = 0;
     }
@@ -262,13 +359,13 @@ remar2d::loadTileSet(char *file)
   return tileSet->getName();
 }
 
-int
+void
 remar2d::removeTileSet(char *tileset)
 {
 
 }
 
-bool
+void
 remar2d::loadTileMap(char *file)
 {
 
@@ -281,6 +378,8 @@ remar2d::setupTileBackground(int size_x, int size_y)
     {
       delete [] tiles;
       delete [] dirty;
+      delete [] updateRects;
+      delete [] allRects;
     }
 
   int odd_width, odd_height;
@@ -294,6 +393,9 @@ remar2d::setupTileBackground(int size_x, int size_y)
   tileWidth = size_x;
   tileHeight = size_y;
 
+  updateRects = new SDL_Rect[mapWidth * mapHeight];
+  allRects = new SDL_Rect[mapWidth * mapHeight];
+
   tiles = new Tile*[mapWidth * mapHeight];
   dirty = new int[mapWidth * mapHeight];
 
@@ -301,6 +403,27 @@ remar2d::setupTileBackground(int size_x, int size_y)
     {
       tiles[i] = new Tile();
       dirty[i] = 1;
+
+      allRects[i].x = (i % mapWidth)*tileWidth;
+      allRects[i].y = (i / mapWidth)*tileHeight;
+      allRects[i].w = tileWidth;
+      allRects[i].h = tileHeight;
+    }
+
+  /* The last column and the last row of Update Rects are *NOT*
+     clipped to the screen, so we must make sure that they're not
+     outside of the screen. */
+  if(odd_width)
+    {
+      int lastRectWidth = screenWidth % size_x;
+      for(int y = mapWidth - 1;y < mapWidth * mapHeight;y += mapWidth)
+	allRects[y].w = lastRectWidth;
+    }
+  if(odd_height)
+    {
+      int lastRectHeight = screenHeight % size_y;
+      for(int x = mapWidth * (mapHeight - 1);x < mapWidth * mapHeight; x++)
+	allRects[x].h = lastRectHeight;
     }
 
   backgroundSetup = true;
@@ -408,8 +531,7 @@ inline void clip(int *v, int limit)
     *v = limit - 1;
 }
 
-void
-remar2d::addSpriteToTiles(SpriteInstance *spriteInstance)
+void addSpriteToTiles(SpriteInstance *spriteInstance)
 {
   SDL_Rect *rect = spriteInstance->getCurrentRect();
 
@@ -433,11 +555,12 @@ remar2d::addSpriteToTiles(SpriteInstance *spriteInstance)
       {
 	if(tiles[x + y * mapWidth])
 	  tiles[x + y * mapWidth]->addSpriteInstance(spriteInstance);
+	dirty[x + y * mapWidth] = 1;
+	tiles[x + y * mapWidth]->markSpritesDirty();
       }
 }
 
-void
-remar2d::removeSpriteFromTiles(SpriteInstance *spriteInstance)
+void removeSpriteFromTiles(SpriteInstance *spriteInstance)
 {
   SDL_Rect *rect = spriteInstance->getCurrentRect();
 
@@ -461,6 +584,8 @@ remar2d::removeSpriteFromTiles(SpriteInstance *spriteInstance)
       {
 	if(tiles[x + y * mapWidth])
 	  tiles[x + y * mapWidth]->removeSpriteInstance(spriteInstance);
+	dirty[x + y * mapWidth] = 1;
+	tiles[x + y * mapWidth]->markSpritesDirty();
       }
 }
 
@@ -483,7 +608,8 @@ remar2d::showSprite(int sprite, bool show)
     {
       spriteInstances[sprite]->setVisible(show);
 
-      SDL_Rect *rect = spriteInstances[sprite]->getLastRect();
+      //SDL_Rect *rect = spriteInstances[sprite]->getLastRect();
+      SDL_Rect *rect = spriteInstances[sprite]->getCurrentRect();
       markBackgroundDirty(rect);
     }
 }
@@ -667,8 +793,7 @@ remar2d::setFullScreen(bool on)
   markBackgroundDirty(&dirtyRect);
 }
 
-void
-remar2d::markBackgroundDirty(SDL_Rect *rect)
+void markBackgroundDirty(SDL_Rect *rect)
 {
   int x1 = rect->x;
   int x2 = rect->x + rect->w;

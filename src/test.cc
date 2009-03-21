@@ -21,7 +21,7 @@
  * Test the remar2d Graphics Engine
  */
 
-#define IJIS 1
+#define IJIS 10
 
 #include "remar2d.h"
 #include <unistd.h>
@@ -48,6 +48,12 @@ int main(int argc, char *argv[])
   gfx = new remar2d(WIDTH, HEIGHT, BPP, FS, "test");
 
   gfx->setupTileBackground(32, 32);
+  char *fnt = gfx->loadFont("../gfx/text.xml");
+
+  int loading = gfx->print("text", "loading");
+  gfx->showSprite(loading, true);
+  gfx->moveSpriteAbs(loading, 0, 0);
+  gfx->redraw();
 
   if(gfx->getError() == remar2d::FAILED_SET_VIDEO_MODE)
     {
@@ -68,7 +74,6 @@ int main(int argc, char *argv[])
 	gfx->setTile(x, y, t1, (x*y)%4, 0);
       }
 
-  char *fnt = gfx->loadFont("../gfx/text.xml");
   for(int i = 0;i < num_sprites;i++)
     {
       gfx->loadSprite(SPRITES[i]);

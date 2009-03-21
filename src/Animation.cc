@@ -19,6 +19,9 @@
 
 #include "Animation.h"
 
+#include "SurfaceCache.h"
+extern SurfaceCache *surfaceCache;
+
 Animation::Animation(const char *name)
 {
   this->name = name;
@@ -37,7 +40,7 @@ void
 Animation::addImage(const char *path, int size_x, int size_y,
 		    int orig_x, int orig_y, const char *key)
 {
-  image = SDL_LoadBMP(path);
+  image = surfaceCache->get(path);
   if(image == 0)
     {
       printf("FAILED TO LOAD IMAGE \"%s\"\n", path);

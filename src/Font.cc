@@ -1,5 +1,8 @@
 #include "Font.h"
 
+#include "SurfaceCache.h"
+extern SurfaceCache *surfaceCache;
+
 Font::Font(char *file)
   : name(""), size_x(0), size_y(0)
 {
@@ -116,7 +119,7 @@ Font::addImageToFont(TiXmlElement *element, char *pathToXml)
   strncpy(&pathToImage[pathLen], path, strlen(path));
   pathToImage[strlen(path) + pathLen] = '\0';
 
-  SDL_Surface *image = SDL_LoadBMP(pathToImage);
+  SDL_Surface *image = surfaceCache->get(pathToImage);
   if(image == 0)
     {
       printf("FAILED TO LOAD IMAGE \"%s\"\n", path);
