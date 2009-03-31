@@ -1,6 +1,6 @@
-CFLAGS =	`sdl-config --cflags` -g -Wall -pg
+CFLAGS =	`sdl-config --cflags` -g -Wall
 CPPFLAGS =	$(CFLAGS)
-LIBS =		`sdl-config --libs` -pg
+LIBS =		`sdl-config --libs`
 
 PROGS =		test
 

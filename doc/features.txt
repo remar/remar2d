@@ -1,5 +1,10 @@
 FEATURES
 -------------------------------------------------------------------------------
+Throw nice error message when trying to create a sprite instance from
+non-existant sprite.
+
+Allow removal of text sprites/instances.
+
 
 DONE
 -------------------------------------------------------------------------------
