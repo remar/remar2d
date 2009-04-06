@@ -21,9 +21,12 @@
 
 SpriteInstance::SpriteInstance(Sprite *sprite)
   :  x(0), y(0), currentFrame(0),currentAnimationName(0), currentAnimation(0),
-     paused(false), timeSpentInFrame(0),redraw(false),  neverRedraw(false)
+     paused(false), timeSpentInFrame(0),redraw(false),  neverRedraw(false),
+     currentAnimRect(0)
 {
   this->sprite = sprite;
+
+  currentRect.x = currentRect.y = currentRect.w = currentRect.h = 0;
 }
 
 void
@@ -145,6 +148,9 @@ SpriteInstance::getCurrentRect()
 {
   // FIXME: Must take into account the animation offset as well!!
   // Animation *animation = sprite->getAnimation(currentAnimationName);
+  if(!currentAnimRect)
+    return &currentRect;
+
   currentRect.x = x;
   currentRect.y = y;
   currentRect.w = currentAnimRect->w;
