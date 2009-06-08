@@ -14,6 +14,10 @@ TEST =		test.o $(SRC)
 
 libremar2d.a:	$(SRC)
 	ar rvs $@ $(SRC)
+	mkdir -p ../lib
+	cp $@ ../lib/.
+	mkdir -p ../include
+	cp remar2d.h ../include/.
 
 install:	libremar2d.a
 	-cp libremar2d.a /usr/lib/.
