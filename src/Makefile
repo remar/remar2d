@@ -23,6 +23,10 @@ install:	libremar2d.a
 	-cp libremar2d.a /usr/lib/.
 	-cp remar2d.h /usr/include/.
 
+uninstall:
+	-rm /usr/lib/libremar2d.a
+	-rm /usr/include/remar2d.h
+
 test:		$(TEST)
 		g++ -o $@ $^ $(LIBS)
 

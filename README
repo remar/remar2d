@@ -1,4 +1,8 @@
 remar2d - 2D graphics engine using SDL
 -------------------------------------------------------------------------------
 
-Yes, yes. Yes yes yes. Some readme here. Yes.
+This is a very basic sprite engine with tile background. It was
+written from scratch when developing Retrobattle, please use it in
+whatever way you wish (as long as you follow the GPL...).
+
+
