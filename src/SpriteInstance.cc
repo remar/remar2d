@@ -21,8 +21,9 @@
 
 SpriteInstance::SpriteInstance(Sprite *sprite)
   :  x(0), y(0), currentFrame(0),currentAnimationName(0), currentAnimation(0),
-     paused(false), timeSpentInFrame(0),redraw(false),  neverRedraw(false),
-     currentAnimRect(0)
+     currentAnimRect(0), paused(false), timeSpentInFrame(0),redraw(false),
+     neverRedraw(false)
+     
 {
   this->sprite = sprite;
 
@@ -30,7 +31,7 @@ SpriteInstance::SpriteInstance(Sprite *sprite)
 }
 
 void
-SpriteInstance::setAnimation(char *animation)
+SpriteInstance::setAnimation(const char *animation)
 {
   currentAnimationName = animation;
   currentFrame = 0;
@@ -54,7 +55,7 @@ SpriteInstance::getSprite()
   return sprite;
 }
 
-char *
+const char *
 SpriteInstance::getCurrentAnimation()
 {
   return currentAnimationName;

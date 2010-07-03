@@ -26,10 +26,10 @@ class SpriteInstance
 {
  public:
   SpriteInstance(Sprite *sprite);
-  void setAnimation(char *animation);
+  void setAnimation(const char *animation);
   void setVisible(bool visible);
   Sprite *getSprite();
-  char *getCurrentAnimation();
+  const char *getCurrentAnimation();
   void animate(int delta);
   void pauseAnimation(bool yes);
   bool getVisible();
@@ -48,7 +48,7 @@ class SpriteInstance
  private:
   Sprite *sprite;
 
-  char *currentAnimationName;
+  const char *currentAnimationName;
   Animation *currentAnimation;
   SDL_Rect *currentAnimRect;
   bool paused;

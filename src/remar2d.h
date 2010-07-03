@@ -40,25 +40,25 @@ class remar2d
   void showCredits();
 
   ErrorCode getError();
-  char *getErrorMessage();
+  const char *getErrorMessage();
 
   void redraw();
 
   void setBackgroundColor(int r, int g, int b);
 
-  char *loadTileSet(char *file);
-  void  removeTileSet(char *tileset);
-  void  loadTileMap(char *file);
+  const char *loadTileSet(const char *file);
+  void  removeTileSet(const char *tileset);
+  void  loadTileMap(const char *file);
 
   void setupTileBackground(int size_x, int size_y);
-  void setTile(int x, int y, char *tileSet, int t_x, int t_y);
+  void setTile(int x, int y, const char *tileSet, int t_x, int t_y);
 
-  char *loadSprite(char *file);
-  void  removeSprite(char *sprite);
+  const char *loadSprite(const char *file);
+  void  removeSprite(const char *sprite);
   int   inFrontOf(int sprite1, int sprite2);
 
-  int  createSpriteInstance(char *sprite);
-  void setAnimation(int sprite, char *animation);
+  int  createSpriteInstance(const char *sprite);
+  void setAnimation(int sprite, const char *animation);
   void moveSpriteRel(int sprite, int x, int y);
   void moveSpriteAbs(int sprite, int x, int y);
   void showSprite(int sprite, bool show);
@@ -68,9 +68,9 @@ class remar2d
 
   void pauseAnimations(bool on);
 
-  char *loadFont(char *file);
-  void removeFont(char *font);
-  int print(char *font, char *text);
+  const char *loadFont(const char *file);
+  void removeFont(const char *font);
+  int print(const char *font, const char *text);
 
   void showPointer(bool on);
 

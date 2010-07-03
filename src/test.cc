@@ -35,7 +35,7 @@ const int FS = 0;
 remar2d *gfx;
 int is[IJIS];
 
-void setAnimation(char *anim)
+void setAnimation(const char *anim)
 {
   for(int i = 0;i < IJIS;i++)
     gfx->setAnimation(is[i], anim);
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   gfx = new remar2d(WIDTH, HEIGHT, BPP, FS, "test");
 
   gfx->setupTileBackground(32, 32);
-  char *fnt = gfx->loadFont("../gfx/text.xml");
+  const char *fnt = gfx->loadFont("../gfx/text.xml");
 
   int loading = gfx->print("text", "loading");
   gfx->showSprite(loading, true);
@@ -62,10 +62,10 @@ int main(int argc, char *argv[])
       exit(-1);
     }
 
-  char *SPRITES[] = { "../gfx/iji.xml", "../gfx/yellow_iji/iji.xml" };
+  const char *SPRITES[] = { "../gfx/iji.xml", "../gfx/yellow_iji/iji.xml" };
   int num_sprites = 2;
 
-  char *t1 = gfx->loadTileSet("../gfx/tileset.xml");
+  const char *t1 = gfx->loadTileSet("../gfx/tileset.xml");
   printf("Tileset: %s\n", t1);
 
   for(int y = 0;y < 15;y++)

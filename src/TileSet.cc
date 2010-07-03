@@ -23,8 +23,8 @@
 #include "SurfaceCache.h"
 extern SurfaceCache *surfaceCache;
 
-TileSet::TileSet(char *file)
-  : size_x(0), size_y(0), image(0), name("")
+TileSet::TileSet(const char *file)
+  : name((char *)""), image(0), size_x(0), size_y(0)
 {
   TiXmlDocument doc(file);
 
@@ -40,7 +40,7 @@ TileSet::TileSet(char *file)
     {
       TiXmlElement *element = node->ToElement();
 
-      char *n = (char *)element->Attribute("name");
+      const char *n = element->Attribute("name");
       name = new char[strlen(n) + 1];
       strncpy(name, n, strlen(n) + 1);
 
@@ -95,10 +95,10 @@ TileSet::~TileSet()
   image = 0;
 }
 
-char *
+const char *
 TileSet::getName()
 {
-  return name;
+  return (const char *)name;
 }
 
 SDL_Rect *

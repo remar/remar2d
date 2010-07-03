@@ -25,7 +25,7 @@ Tile::Tile()
 {
 }
 
-Tile::Tile(char *tileSet, int x, int y)
+Tile::Tile(const char *tileSet, int x, int y)
   : empty(false)
 {
   this->tileSet = tileSet;

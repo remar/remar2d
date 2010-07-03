@@ -4,7 +4,7 @@ LIBS =		`sdl-config --libs`
 
 PROGS =		test
 
-all:		$(PROGS)
+all:		$(PROGS) libremar2d.a
 
 SRC = 		remar2d.o tinyxml.o tinystr.o tinyxmlerror.o \
 		tinyxmlparser.o Sprite.o Animation.o SpriteInstance.o \
@@ -31,4 +31,5 @@ test:		$(TEST)
 		g++ -o $@ $^ $(LIBS)
 
 clean:
-		rm -f *.o *~ $(PROGS)
+		rm -f *.o *~ $(PROGS) libremar2d.a
+		rm -rf ../lib ../include

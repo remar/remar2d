@@ -19,8 +19,8 @@
 
 #include "Sprite.h"
 
-Sprite::Sprite(char *file)
-  : name("")
+Sprite::Sprite(const char *file)
+  : name((char *)"")
 {
   TiXmlDocument doc(file);
 
@@ -38,17 +38,17 @@ Sprite::Sprite(char *file)
     {
       TiXmlElement *sprite_elm = sprite->ToElement();
 
-      char *n = (char *)sprite_elm->Attribute("name");
+      const char *n = sprite_elm->Attribute("name");
       name = new char[strlen(n) + 1];
       strncpy(name, n, strlen(n) + 1);
 
-      while(animation = sprite->IterateChildren("animation", animation))
+      while((animation = sprite->IterateChildren("animation", animation)))
 	{
 	  element = animation->ToElement();
 
 	  startNewAnimation(element);
 
-	  while(node = animation->IterateChildren(node))
+	  while((node = animation->IterateChildren(node)))
 	    {
 	      element = node->ToElement();
 	      if(strcmp(element->Value(), "image") == 0)
@@ -79,14 +79,14 @@ Sprite::~Sprite()
   animations.clear();
 }
 
-char *
+const char *
 Sprite::getName()
 {  
-  return name;
+  return (const char *)name;
 }
 
 void
-Sprite::setName(char *n)
+Sprite::setName(const char *n)
 {
   if(name)
     delete [] name;
@@ -96,7 +96,7 @@ Sprite::setName(char *n)
 }
 
 Animation *
-Sprite::getAnimation(char *animName)
+Sprite::getAnimation(const char *animName)
 {
   return animations[animName];
 }
@@ -124,7 +124,7 @@ Sprite::startNewAnimation(TiXmlElement *element)
 }
 
 void
-Sprite::addImageToAnimation(TiXmlElement *element, char *pathToXml)
+Sprite::addImageToAnimation(TiXmlElement *element, const char *pathToXml)
 {
   int pathLen;
   for(int i = strlen(pathToXml);i >= 0;i--)

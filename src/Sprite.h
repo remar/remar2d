@@ -30,13 +30,13 @@ using namespace std;
 class Sprite
 {
  public:
-  Sprite(char *file);
+  Sprite(const char *file);
   Sprite();
   ~Sprite();
 
-  char *getName();
-  void setName(char *n);
-  Animation *getAnimation(char *animName);
+  const char *getName();
+  void setName(const char *n);
+  Animation *getAnimation(const char *animName);
   void addAnimation(Animation *anim);
 
  private:
@@ -46,7 +46,7 @@ class Sprite
   map<string, Animation *> animations;
 
   void startNewAnimation(TiXmlElement *element);
-  void addImageToAnimation(TiXmlElement *element, char *pathToXml);
+  void addImageToAnimation(TiXmlElement *element, const char *pathToXml);
   void addFrameToAnimation(TiXmlElement *element);
 };
 

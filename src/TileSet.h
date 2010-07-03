@@ -25,10 +25,10 @@
 class TileSet
 {
  public:
-  TileSet(char *file);
+  TileSet(const char *file);
   ~TileSet();
 
-  char *getName();
+  const char *getName();
   SDL_Rect *getRect(int x, int y);
   SDL_Surface *getImage();
 

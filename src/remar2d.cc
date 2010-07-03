@@ -160,12 +160,12 @@ remar2d::getError()
   return errorCode;
 }
 
-char *
+const char *
 remar2d::getErrorMessage()
 {
-  char *errorToString[] = { "No error",
-			    "Failed to set video mode",
-			    "Failed to load sprite"};
+  const char *errorToString[] = { "No error",
+				  "Failed to set video mode",
+				  "Failed to load sprite"};
 
   if(errorCode >= NO_ERROR && errorCode <= FAILED_LOAD_TILESET)
     {
@@ -263,7 +263,7 @@ remar2d::redraw()
 	  SDL_Rect *source;
 	  SDL_Rect dest;
 
-	  char *anim = spriteInstance->getCurrentAnimation();
+	  const char *anim = spriteInstance->getCurrentAnimation();
 
 	  if(!anim)
 	    {
@@ -335,8 +335,8 @@ remar2d::setBackgroundColor(int r, int g, int b)
   backgroundColor = SDL_MapRGB(screen->format, r, g, b);
 }
 
-char *
-remar2d::loadTileSet(char *file)
+const char *
+remar2d::loadTileSet(const char *file)
 {
   TileSet *tileSet = new TileSet(file);
   if(tileSet)
@@ -360,13 +360,13 @@ remar2d::loadTileSet(char *file)
 }
 
 void
-remar2d::removeTileSet(char *tileset)
+remar2d::removeTileSet(const char *tileset)
 {
 
 }
 
 void
-remar2d::loadTileMap(char *file)
+remar2d::loadTileMap(const char *file)
 {
 
 }
@@ -430,7 +430,7 @@ remar2d::setupTileBackground(int size_x, int size_y)
 }
 
 void
-remar2d::setTile(int x, int y, char *tileSet, int t_x, int t_y)
+remar2d::setTile(int x, int y, const char *tileSet, int t_x, int t_y)
 {
   /* Save the old tile for a while, might want to get list of sprites
      from it */
@@ -458,8 +458,8 @@ remar2d::setTile(int x, int y, char *tileSet, int t_x, int t_y)
   dirty[y*mapWidth + x] = 1;
 }
 
-char *
-remar2d::loadSprite(char *file)
+const char *
+remar2d::loadSprite(const char *file)
 {
   Sprite *sprite = new Sprite(file);
   if(sprite)
@@ -484,7 +484,7 @@ remar2d::loadSprite(char *file)
 }
 
 void
-remar2d::removeSprite(char *sprite)
+remar2d::removeSprite(const char *sprite)
 {
   Sprite *spr = sprites[string(sprite)];
 
@@ -494,7 +494,7 @@ remar2d::removeSprite(char *sprite)
 }
 
 int
-remar2d::createSpriteInstance(char *sprite)
+remar2d::createSpriteInstance(const char *sprite)
 {
   Sprite *spr = sprites[string(sprite)];
 
@@ -506,7 +506,7 @@ remar2d::createSpriteInstance(char *sprite)
 }
 
 void
-remar2d::setAnimation(int sprite, char *animation)
+remar2d::setAnimation(int sprite, const char *animation)
 {
   spriteInstances[sprite]->setAnimation(animation);
 }
@@ -640,8 +640,8 @@ remar2d::pauseAnimations(bool on)
   pausedAnimations = on;
 }
 
-char *
-remar2d::loadFont(char *file)
+const char *
+remar2d::loadFont(const char *file)
 {
   Font *font = new Font(file);
 
@@ -658,7 +658,7 @@ remar2d::loadFont(char *file)
 }
 
 void
-remar2d::removeFont(char *font)
+remar2d::removeFont(const char *font)
 {
   Font *fnt = fonts[string(font)];
 
@@ -668,7 +668,7 @@ remar2d::removeFont(char *font)
 }
 
 int
-remar2d::print(char *fontName, char *text)
+remar2d::print(const char *fontName, const char *text)
 {
   /* Create a new sprite, new animation, new frame containing the
      text. 

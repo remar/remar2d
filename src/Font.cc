@@ -22,8 +22,8 @@
 #include "SurfaceCache.h"
 extern SurfaceCache *surfaceCache;
 
-Font::Font(char *file)
-  : name(""), size_x(0), size_y(0)
+Font::Font(const char *file)
+  : name((char *)""), size_x(0), size_y(0)
 {
   TiXmlDocument doc(file);
 
@@ -39,7 +39,7 @@ Font::Font(char *file)
   if(font)
     {
       element = font->ToElement();
-      char *n = (char *)element->Attribute("name");
+      const char *n = element->Attribute("name");
       if(n)
 	{
 	  name = new char[strlen(n) + 1];
@@ -74,10 +74,10 @@ Font::~Font()
 
 }
 
-char *
+const char *
 Font::getName()
 {
-  return name;
+  return (const char *)name;
 }
 
 int
@@ -99,7 +99,7 @@ Font::getCharacter(char ch)
 }
 
 char *
-Font::addImageToFont(TiXmlElement *element, char *pathToXml)
+Font::addImageToFont(TiXmlElement *element, const char *pathToXml)
 {
   int pathLen;
   for(int i = strlen(pathToXml);i >= 0;i--)

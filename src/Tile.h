@@ -29,7 +29,7 @@ class Tile
 {
  public:
   Tile();
-  Tile(char *tileSet, int x, int y);
+  Tile(const char *tileSet, int x, int y);
 
   /** Add sprite instance to tile to indicate that this sprite should
       be redrawn if this tile is redrawn. */
@@ -44,7 +44,7 @@ class Tile
 
   void markSpritesDirty();
 
-  char *tileSet;
+  const char *tileSet;
 
   /* Tile position in the tileset */
   int x, y;

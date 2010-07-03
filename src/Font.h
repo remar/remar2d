@@ -29,10 +29,10 @@
 class Font
 {
  public:
-  Font(char *file);
+  Font(const char *file);
   ~Font();
 
-  char *getName();
+  const char *getName();
 
   int getWidth();
   int getHeight();
@@ -40,7 +40,7 @@ class Font
   Character *getCharacter(char ch);
   
  private:
-  char *addImageToFont(TiXmlElement *element, char *pathToXml);
+  char *addImageToFont(TiXmlElement *element, const char *pathToXml);
   void addCharToFont(TiXmlElement *element, char *currentImage);
 
   char *name;
