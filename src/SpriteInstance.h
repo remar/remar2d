@@ -51,6 +51,8 @@ class SpriteInstance
   const char *currentAnimationName;
   Animation *currentAnimation;
   SDL_Rect *currentAnimRect;
+  int currentAnimOffsetX;
+  int currentAnimOffsetY;
   bool paused;
 
   int timeSpentInFrame;

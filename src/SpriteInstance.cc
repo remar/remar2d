@@ -39,6 +39,8 @@ SpriteInstance::setAnimation(const char *animation)
 
   currentAnimation = sprite->getAnimation(currentAnimationName);
   currentAnimRect = currentAnimation->getRect(0);
+  currentAnimOffsetX = currentAnimation->orig_x;
+  currentAnimOffsetY = currentAnimation->orig_y;
 
   redraw = true;
 }
@@ -152,8 +154,8 @@ SpriteInstance::getCurrentRect()
   if(!currentAnimRect)
     return &currentRect;
 
-  currentRect.x = x;
-  currentRect.y = y;
+  currentRect.x = x - currentAnimOffsetX;
+  currentRect.y = y - currentAnimOffsetY;
   currentRect.w = currentAnimRect->w;
   currentRect.h = currentAnimRect->h;
 
